@@ -1,0 +1,28 @@
+name: Build & Publish Artifact
+
+# Run on every push to the main branch (you can change the branch name)
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest   # GitHub gives us a Linux VM for free
+
+    steps:
+      # 1️⃣ Pull the repo code into the runner
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2️⃣ Create a zip file named with the current commit SHA (unique)
+      - name: Package artifact
+        run: |
+          zip -r hello-${{ github.sha }}.zip hello.txt
+
+      # 3️⃣ Upload the zip as a downloadable artifact
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: hello-artifact
+          path: hello-*.zip
+          retention-days: 30   # keep it around for 30 days
